@@ -1,0 +1,63 @@
+services:
+  db:
+    container_name: ${NAME}-db
+    image: mariadb:10.6.4-focal
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    expose:
+      - 3306
+      - 33060
+  wordpress:
+    container_name: ${NAME}-wp
+    depends_on:
+      - db
+    image: wordpress:latest
+    ports:
+      - 8000:80
+    restart: always
+    volumes:
+      - .:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+  phpmyadmin:
+    container_name: ${NAME}-phpmyadmin
+    depends_on:
+      - db
+    restart: no
+    ports:
+      - 8080:80
+    image: phpmyadmin/phpmyadmin
+    volumes:
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    environment:
+      PMA_HOST: db:3306
+      PMA_USER: root
+      PMA_PORT: 3306
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+
+  wpcli:
+    container_name: ${NAME}-wpcli
+    depends_on:
+      - wordpress
+    image: wordpress:cli
+    command: tail -f /dev/null
+    volumes:
+      - .:/var/www/html
+    environment:
+      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+volumes:
+  db_data:
