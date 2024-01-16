@@ -3,7 +3,7 @@
 This `docker compose` template intends to be helpful when developing or working with WordPress locally. It comes with WordPress, MariaDB, PHPMyAdmin, and WP-CLI.
 
 ## How to Use
-To get started, copy this repository into the directory you'd like to begin working in. Then, copy `.env.sample` to `.env` and edit accordingly.Start the environments with `docker compose up`. If you'd like to edit and restart the containers from scratch, use `docker compose up --force-recreate --build`.
+To get started, copy this repository into the directory you'd like to begin working in. Then, copy `.env.sample` to `.env` and edit accordingly.Start the environments with `docker compose up`. If you'd like to edit and restart the containers from scratch, use `docker compose up --force-recreate --build`. To adjust PHP settings like upload size, simply make the desired changes to `uploads.ini`.
 
 The WordPress site will be available at http://localhost:8000 and PHPMyAdmin will be available at http://localhost:8080.
 
