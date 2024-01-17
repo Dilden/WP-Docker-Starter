@@ -5,7 +5,7 @@ services:
     command: '--default-authentication-plugin=mysql_native_password'
     volumes:
       - db_data:/var/lib/mysql
-    restart: always
+    restart: on-failure
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -21,7 +21,7 @@ services:
     image: wordpress:latest
     ports:
       - 8000:80
-    restart: always
+    restart: on-failure
     volumes:
       - .:/var/www/html
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
@@ -34,7 +34,7 @@ services:
     container_name: ${NAME}-phpmyadmin
     depends_on:
       - db
-    restart: no
+    restart: on-failure
     ports:
       - 8080:80
     image: phpmyadmin/phpmyadmin
@@ -51,6 +51,7 @@ services:
     depends_on:
       - wordpress
     image: wordpress:cli
+    restart: on-failure
     command: tail -f /dev/null
     volumes:
       - .:/var/www/html
